@@ -1,0 +1,29 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function onChatted(player, msg)
+    msg = msg:lower()
+    if msg == "/invocargenio" then
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            -- Teleporta pra perto do player
+            LocalPlayer.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame + Vector3.new(2, 0, 2)
+            print("Você foi invocado pelo", player.Name)
+        end
+    end
+end
+
+-- Conectar aos jogadores atuais
+for _, p in pairs(Players:GetPlayers()) do
+    if p ~= LocalPlayer then
+        p.Chatted:Connect(function(msg)
+            onChatted(p, msg)
+        end)
+    end
+end
+
+-- Conectar aos jogadores que entrarem depois
+Players.PlayerAdded:Connect(function(p)
+    p.Chatted:Connect(function(msg)
+        onChatted(p, msg)
+    end)
+end)
