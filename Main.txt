@@ -1,33 +1,36 @@
--- Script: Teleporta até quem digitar /helpadm e mostra GUI gigante na tela
--- Executar com executor (somente você precisa)
-
+--// Serviços
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
--- Função: Mostrar mensagem gigante na tela por 5 segundos
-local function showBigMessage()
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "ADMMessageGui"
-    gui.ResetOnSpawn = false
-    gui.Parent = game.CoreGui
-
-    local text = Instance.new("TextLabel")
-    text.Size = UDim2.new(1, 0, 1, 0)
-    text.Position = UDim2.new(0, 0, 0, 0)
-    text.BackgroundTransparency = 1
-    text.Text = "ALA O ADM FODÃO ENTROU KK"
-    text.TextColor3 = Color3.fromRGB(255, 0, 0)
-    text.TextStrokeColor3 = Color3.new(0, 0, 0)
-    text.TextStrokeTransparency = 0.3
-    text.TextScaled = true
-    text.Font = Enum.Font.Arcade
-    text.Parent = gui
-
-    wait(5)
-    gui:Destroy()
+--// Remover GUI anterior se já existir
+if PlayerGui:FindFirstChild("ADMGui") then
+    PlayerGui:FindFirstChild("ADMGui"):Destroy()
 end
 
--- Função: Teleporta até o player
+--// Criar a GUI de entrada do ADM
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ADMGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = PlayerGui
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(1, 0, 0.2, 0)
+textLabel.Position = UDim2.new(0, 0, 0.4, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.Text = "ALA O ADM ENTROU KKJ"
+textLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+textLabel.TextStrokeTransparency = 0
+textLabel.TextScaled = true
+textLabel.Font = Enum.Font.Arcade
+textLabel.Parent = screenGui
+
+--// Remover a GUI após 5 segundos
+task.delay(5, function()
+    screenGui:Destroy()
+end)
+
+--// Função de teleporte até quem digitar /helpadm
 local function teleportToPlayer(player)
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local targetChar = player.Character or player.CharacterAdded:Wait()
@@ -38,12 +41,11 @@ local function teleportToPlayer(player)
 
         if root and targetRoot then
             root.CFrame = targetRoot.CFrame + Vector3.new(0, 5, 0)
-            showBigMessage()
         end
     end
 end
 
--- Detecta mensagens no chat
+--// Monitorar novos jogadores
 Players.PlayerAdded:Connect(function(player)
     player.Chatted:Connect(function(msg)
         if msg:lower() == "/helpadm" then
@@ -52,8 +54,8 @@ Players.PlayerAdded:Connect(function(player)
     end)
 end)
 
--- Para quem já está no servidor
-for _, player in ipairs(Players:GetPlayers()) do
+--// Monitorar jogadores já presentes
+for _, player in pairs(Players:GetPlayers()) do
     if player ~= LocalPlayer then
         player.Chatted:Connect(function(msg)
             if msg:lower() == "/helpadm" then
