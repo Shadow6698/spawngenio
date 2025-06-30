@@ -1,10 +1,32 @@
--- Script: Teleportar até quem digitar /helpadm no chat
--- Feito para executores (FE support)
+-- Script: Teleportar até quem digitar /helpadm no chat + Mensagem na tela
+-- Executar no seu executor (somente você precisa rodar)
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- Função que teleporta você até o jogador que digitou o comando
+-- Função para exibir mensagem na tela por 5 segundos
+local function showMessage()
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "ADMMsg"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.Parent = game.CoreGui
+
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.Size = UDim2.new(1, 0, 0, 50)
+    TextLabel.Position = UDim2.new(0, 0, 0.5, -25)
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Text = "ALA O ADM FODÃO ENTROU KK"
+    TextLabel.TextColor3 = Color3.new(1, 0, 0)
+    TextLabel.TextStrokeTransparency = 0
+    TextLabel.TextSize = 36
+    TextLabel.Font = Enum.Font.GothamBlack
+    TextLabel.Parent = ScreenGui
+
+    wait(5)
+    ScreenGui:Destroy()
+end
+
+-- Função para teleportar até o jogador
 local function teleportToPlayer(player)
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local targetChar = player.Character or player.CharacterAdded:Wait()
@@ -15,11 +37,12 @@ local function teleportToPlayer(player)
 
         if root and targetRoot then
             root.CFrame = targetRoot.CFrame + Vector3.new(0, 5, 0)
+            showMessage() -- Mostra a mensagem após o teleporte
         end
     end
 end
 
--- Monitorar mensagens no chat
+-- Detecta quando alguém digita /helpadm
 Players.PlayerAdded:Connect(function(player)
     player.Chatted:Connect(function(msg)
         if msg:lower() == "/helpadm" then
@@ -28,7 +51,7 @@ Players.PlayerAdded:Connect(function(player)
     end)
 end)
 
--- Para jogadores que já estão no jogo
+-- Detecta em quem já está no servidor
 for _, player in pairs(Players:GetPlayers()) do
     if player ~= LocalPlayer then
         player.Chatted:Connect(function(msg)
