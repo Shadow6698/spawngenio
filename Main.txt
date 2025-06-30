@@ -1,32 +1,33 @@
--- Script: Teleportar até quem digitar /helpadm no chat + Mensagem na tela
--- Executar no seu executor (somente você precisa rodar)
+-- Script: Teleporta até quem digitar /helpadm e mostra GUI gigante na tela
+-- Executar com executor (somente você precisa)
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- Função para exibir mensagem na tela por 5 segundos
-local function showMessage()
-    local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "ADMMsg"
-    ScreenGui.ResetOnSpawn = false
-    ScreenGui.Parent = game.CoreGui
+-- Função: Mostrar mensagem gigante na tela por 5 segundos
+local function showBigMessage()
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "ADMMessageGui"
+    gui.ResetOnSpawn = false
+    gui.Parent = game.CoreGui
 
-    local TextLabel = Instance.new("TextLabel")
-    TextLabel.Size = UDim2.new(1, 0, 0, 50)
-    TextLabel.Position = UDim2.new(0, 0, 0.5, -25)
-    TextLabel.BackgroundTransparency = 1
-    TextLabel.Text = "ALA O ADM FODÃO ENTROU KK"
-    TextLabel.TextColor3 = Color3.new(1, 0, 0)
-    TextLabel.TextStrokeTransparency = 0
-    TextLabel.TextSize = 36
-    TextLabel.Font = Enum.Font.GothamBlack
-    TextLabel.Parent = ScreenGui
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.new(1, 0, 1, 0)
+    text.Position = UDim2.new(0, 0, 0, 0)
+    text.BackgroundTransparency = 1
+    text.Text = "ALA O ADM FODÃO ENTROU KK"
+    text.TextColor3 = Color3.fromRGB(255, 0, 0)
+    text.TextStrokeColor3 = Color3.new(0, 0, 0)
+    text.TextStrokeTransparency = 0.3
+    text.TextScaled = true
+    text.Font = Enum.Font.Arcade
+    text.Parent = gui
 
     wait(5)
-    ScreenGui:Destroy()
+    gui:Destroy()
 end
 
--- Função para teleportar até o jogador
+-- Função: Teleporta até o player
 local function teleportToPlayer(player)
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local targetChar = player.Character or player.CharacterAdded:Wait()
@@ -37,12 +38,12 @@ local function teleportToPlayer(player)
 
         if root and targetRoot then
             root.CFrame = targetRoot.CFrame + Vector3.new(0, 5, 0)
-            showMessage() -- Mostra a mensagem após o teleporte
+            showBigMessage()
         end
     end
 end
 
--- Detecta quando alguém digita /helpadm
+-- Detecta mensagens no chat
 Players.PlayerAdded:Connect(function(player)
     player.Chatted:Connect(function(msg)
         if msg:lower() == "/helpadm" then
@@ -51,8 +52,8 @@ Players.PlayerAdded:Connect(function(player)
     end)
 end)
 
--- Detecta em quem já está no servidor
-for _, player in pairs(Players:GetPlayers()) do
+-- Para quem já está no servidor
+for _, player in ipairs(Players:GetPlayers()) do
     if player ~= LocalPlayer then
         player.Chatted:Connect(function(msg)
             if msg:lower() == "/helpadm" then
